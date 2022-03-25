@@ -11,7 +11,11 @@ struct CensusProps {
 #[function_component(PopulationList)]
 fn population_list(CensusProps { census }: &CensusProps) -> Html {
     census.iter().map(|population| html! {
-        <p class="underline">{format!("{} : {}", population.age, population.count)}</p>
+        <p class="text-indigo-600 sm:my-4 sm:text-md">
+            <span class="underline">{ format!("{}", population.age) }</span>
+            {" : "}
+            <span class="font-bold">{ format!("{}", population.count) }</span>
+        </p>
     }).collect()
 }
 
@@ -53,8 +57,10 @@ fn app() -> Html {
 
     html! {
         <>
-            <h1>{ "Population Census - Hong Kong" }</h1>
-            <PopulationList census = {(*census).clone()} />
+            <h1 class="text-2xl font-bold text-indigo-600 my-3 mx-2 mx-auto md:max-w-md max-w-sm text-center break-normal">{ "Population Census - Hong Kong" }</h1>
+            <div class="bg-emerald-200 px-4 py-2 mx-auto md:max-w-md max-w-sm rounded">
+                <PopulationList census = {(*census).clone()} />
+            </div>
         </>
     }
 }

@@ -14,3 +14,4 @@ tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 commons = { path = "../commons" }
 tower-http = { version = "0.2.0", features = ["fs", "trace"] }
+reqwest = { version = "^0.11.10", features = ["json"] } 
