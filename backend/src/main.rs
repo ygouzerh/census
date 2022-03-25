@@ -1,11 +1,12 @@
 use axum::{
-    routing::{get, post},
+    routing::{get, get_service},
     http::StatusCode,
     response::IntoResponse,
-    Json, Router,
+    Json,
+    Router,
 };
-use serde::{Deserialize, Serialize};
 use std::net::SocketAddr;
+use tower_http::services::ServeDir;
 use commons::*;
 
 #[tokio::main]
@@ -15,11 +16,16 @@ async fn main() {
 
     // build our application with a route
     let app = Router::new()
-        // `GET /` goes to `root`
-        .route("/", get(root))
         .route("/api/census", get(census))
-        // `POST /users` goes to `create_user`
-        .route("/api/users", get(create_user));
+        .nest(
+            "/static",
+            get_service(ServeDir::new("frontend/dist")).handle_error(|error: std::io::Error| async move {
+                (
+                    StatusCode::INTERNAL_SERVER_ERROR,
+                    format!("Unhandled internal error: {}", error),
+                )
+            }),
+        );
 
     // run our app with hyper
     // `axum::Server` is a re-export of `hyper::Server`
@@ -31,50 +37,16 @@ async fn main() {
         .unwrap();
 }
 
-// basic handler that responds with a static string
-async fn root() -> &'static str {
-    "Hello, World!"
-}
-
-#[derive(Serialize)]
-struct Census {
-    census: Vec<Population>
-}
-
 async fn census() -> impl IntoResponse {
     let census = vec![
         Population {
             age: String::from("18 - 24"),
             count: 180
+        },
+        Population {
+            age: String::from("25 - 60"),
+            count: 82
         }
     ];
     Json(census)
-}
-
-async fn create_user(
-    // this argument tells axum to parse the request body
-    // as JSON into a `CreateUser` type
-) -> impl IntoResponse {
-    // insert your application logic here
-    let user = User {
-        id: 1337,
-        username: String::from("Hello"),
-    };
-
-    // this will be converted into a JSON response
-    // with a status code of `201 Created`
-    Json(user)
-}
-
-// the input to our `create_user` handler
-#[derive(Deserialize)]
-struct CreateUser {
-    username: String,
-}
-
-// the output to our `create_user` handler
-#[derive(Serialize)]
-struct User {
-    id: u64,
-    username: String,
 }
