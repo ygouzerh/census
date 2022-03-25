@@ -11,7 +11,7 @@ struct CensusProps {
 #[function_component(PopulationList)]
 fn population_list(CensusProps { census }: &CensusProps) -> Html {
     census.iter().map(|population| html! {
-        <p>{format!("{} : {}", population.age, population.count)}</p>
+        <p class="underline">{format!("{} : {}", population.age, population.count)}</p>
     }).collect()
 }
 
