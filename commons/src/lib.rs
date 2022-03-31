@@ -3,7 +3,8 @@ use serde::{Serialize, Deserialize};
 #[derive(Clone, PartialEq, Debug, Serialize, Deserialize)]
 pub struct Population {
     pub age: String,
-    pub count: u32
+    pub count: u32,
+    pub district: String
 }
 
 #[cfg(test)]

@@ -11,7 +11,9 @@ struct CensusProps {
 #[function_component(PopulationList)]
 fn population_list(CensusProps { census }: &CensusProps) -> Html {
     census.iter().map(|population| html! {
-        <p class="text-indigo-600 sm:my-4 sm:text-md">
+        <p class="text-indigo-600 sm:my-4 sm:text-md bg-white-200 rounded">
+            <span class="underline">{ format!("{}", population.district) }</span>
+            {" - "}
             <span class="underline">{ format!("{}", population.age) }</span>
             {" : "}
             <span class="font-bold">{ format!("{}", population.count) }</span>

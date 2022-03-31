@@ -85,20 +85,24 @@ async fn census() -> impl IntoResponse {
         .json::<DataSet>()
         .await
         .unwrap();
-    // // let dataset : DataSet = serde_json::from_value(census).unwrap();
+    // let dataset : DataSet = serde_json::from_value(census).unwrap();
     println!("${:?}", census_fetched.data_set[1].extra.get("AgeDesc").unwrap());
     let population : Vec::<commons::Population> = census_fetched.data_set.iter().map(|data| {
         if let Some(age_json_value) = data.extra.get("AgeDesc") {
             if let Some(count_json_value) = data.extra.get("figure") {
-                return Population {
-                    age: serde_json::from_value(age_json_value.clone()).unwrap(),
-                    count: serde_json::from_value(count_json_value.clone()).unwrap(),
+                if let Some(district_json_value) = data.extra.get("DCDesc") {
+                    return Population {
+                        age: serde_json::from_value(age_json_value.clone()).unwrap(),
+                        count: serde_json::from_value(count_json_value.clone()).unwrap(),
+                        district: serde_json::from_value(district_json_value.clone()).unwrap()
+                    }
                 }
             }
         }
         Population {
             age : "".to_string(),
-            count : 0
+            count : 0,
+            district : "".to_string()
         }
     })
     .filter(|population|
